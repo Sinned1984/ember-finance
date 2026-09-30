@@ -1,0 +1,8 @@
+{
+	# Management/health is reachable only inside this container.
+	admin 127.0.0.1:2019
+}
+
+{$EMBER_APP_URL} {
+	reverse_proxy ember:3000
+}
