@@ -1,0 +1,5 @@
+# Optional migration/restore override: never create an empty replacement volume.
+volumes:
+  ember-auth-state:
+    external: true
+    name: ${EMBER_AUTH_STATE_VOLUME:?Set the verified existing auth-state volume name}

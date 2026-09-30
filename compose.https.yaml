@@ -1,0 +1,46 @@
+# Optional managed HTTPS. Always combine with compose.yaml; Compose 2.24.4+.
+services:
+  ember:
+    ports: !reset []
+    environment:
+      EMBER_DEPLOYMENT_MODE: standalone-https
+  ember-https:
+    image: caddy:2.11.4-alpine
+    depends_on:
+      ember:
+        condition: service_healthy
+    ports:
+      - "${EMBER_HTTPS_BIND_ADDRESS:-0.0.0.0}:80:80"
+      - "${EMBER_HTTPS_BIND_ADDRESS:-0.0.0.0}:443:443"
+    environment:
+      EMBER_APP_URL: ${EMBER_APP_URL:?Set the canonical public HTTPS origin in .env}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ember-tls-data:/data
+      - ember-tls-config:/config
+    restart: unless-stopped
+    stop_grace_period: 30s
+    read_only: true
+    tmpfs:
+      - /tmp:size=16m,mode=1777,noexec,nosuid
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    pids_limit: 128
+    logging:
+      driver: local
+      options:
+        max-size: "10m"
+        max-file: "3"
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:2019/config/"]
+      interval: 30s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+volumes:
+  ember-tls-data:
+  ember-tls-config:

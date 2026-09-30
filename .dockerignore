@@ -1,0 +1,22 @@
+# Allowlist only files needed for a clean production build.
+**
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!next.config.ts
+!tsconfig.json
+!postcss.config.mjs
+!src/
+!src/**
+!scripts/
+!scripts/start.mjs
+!scripts/healthcheck.mjs
+!scripts/auth-config.mjs
+!scripts/totp-admin.mjs
+!public/
+!public/**
+**/.env*
+**/*.pem
+**/*.key
+**/*.log
+**/*.map
